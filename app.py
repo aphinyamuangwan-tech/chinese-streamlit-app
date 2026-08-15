@@ -183,7 +183,7 @@ if not st.session_state.logged_in:
                 else:
                     st.error("กรุณากรอกข้อมูลให้ครบทุกช่อง")
 
-    st.stop()  # หยุดการทำงานไว้ตรงนี้จนกว่าจะ Login สำเร็จ
+    st.stop()
 
 
 # --- 5. เมนูหลักเมื่อ Login เข้าใช้งานสำเร็จแล้ว ---
@@ -338,6 +338,8 @@ with tab3:
 
             st.session_state.q_options = q_options
             st.session_state.game_checked = False
+            # 🔄 รีเซ็ตสถานะการบันทึกคะแนนเพื่อรองรับการเล่นเกมรอบใหม่
+            st.session_state.score_saved = False 
         else:
             st.warning("ต้องมีคำศัพท์อย่างน้อย 4 คำขึ้นไปในระดับนี้เพื่อสร้างเกมจับคู่")
 
@@ -366,13 +368,13 @@ with tab3:
                     st.error(f"**ข้อ {idx} [{zh}]:** ผิด ❌ (คุณตอบ: {ans} | **เฉลยที่ถูกต้อง: {correct}**)")
 
             total_q = len(st.session_state.game_items)
-            st.balloons()
             st.markdown(f"### 📊 คุณได้คะแนนทั้งหมด: **{score} / {total_q}** คะแนน")
 
-            # 💾 บันทึกคะแนนลง Database ถ้ารายการนี้ยังไม่เคยบันทึก
+            # 💾 บันทึกคะแนนลง Database เมื่อกดตรวจคะแนนรอบนี้เป็นครั้งแรก
             if not st.session_state.get("score_saved", False):
                 save_score(st.session_state.username, g_lvl, score, total_q)
                 st.session_state.score_saved = True
+                st.balloons()
                 st.success("💾 บันทึกคะแนนลงในประวัติผู้ใช้งานของคุณเรียบร้อยแล้ว!")
 
 # --------------------------------------------------
